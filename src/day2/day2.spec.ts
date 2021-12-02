@@ -2,24 +2,57 @@ import fs from 'fs';
 
 import test from 'ava';
 
-import { writeUrlDataToFile } from '../lib/fileUtils';
+import { PositionCommand } from './PositionCommand';
+import { positionCalculator, positionCalculatorWithAim } from './day2';
 
-
-test('writeUrlDataToFile', (t) => {
-  const url = '';
+test('positionCalculator', (t) => {
   const fileName = './src/day2/input.txt';
-  writeUrlDataToFile(url, fileName);
 
-  fs.readFile(fileName, 'utf8', function(err, data) {
-    if (err) {
-      return console.log(err);
-    }
-    console.log(data);
-    // do something with data
-  });
+  // const input: Array<PositionCommand> = [
+  //   { commandType: "forward", amount: 5}
+  //   , { commandType: "down", amount: 5}
+  //   , { commandType: "forward", amount: 8}
+  //   , { commandType: "up", amount: 3}
+  //   , { commandType: "down", amount: 8}
+  //   , { commandType: "forward", amount: 2}
+  // ]
 
-  const d = null;
-  t.is(d, null);
+  // const result = positionCalculator(input)
+  // t.is(result, 150);
+
+  const data = fs.readFileSync(fileName, 'utf8');
+  const dataArray = data.split('\n').map(row => row.split(' '));
+  const input: Array<PositionCommand> = dataArray.map(row => {
+    const amount = row[1] ? parseInt(row[1].replace('\r', "")) : 0;
+    return { commandType: row[0], amount };
+  }).filter(it => it.commandType.length > 0);
+  const result = positionCalculator(input);
+  t.is(result, 1727835);
+
 });
 
-// .split('\n').map(Number);
+test('positionCalculatorWithAim', (t) => {
+  const fileName = './src/day2/input.txt';
+
+  // const input: Array<PositionCommand> = [
+  //   { commandType: "forward", amount: 5}
+  //   , { commandType: "down", amount: 5}
+  //   , { commandType: "forward", amount: 8}
+  //   , { commandType: "up", amount: 3}
+  //   , { commandType: "down", amount: 8}
+  //   , { commandType: "forward", amount: 2}
+  // ]
+  //
+  // const result = positionCalculatorWithAim(input)
+  // t.is(result, 900);
+
+  const data = fs.readFileSync(fileName, 'utf8');
+  const dataArray = data.split('\n').map(row => row.split(' '));
+  const input: Array<PositionCommand> = dataArray.map(row => {
+    const amount = row[1] ? parseInt(row[1].replace('\r', "")) : 0;
+    return { commandType: row[0], amount };
+  }).filter(it => it.commandType.length > 0);
+  const result = positionCalculatorWithAim(input);
+  t.is(result, 1544000595);
+
+});
