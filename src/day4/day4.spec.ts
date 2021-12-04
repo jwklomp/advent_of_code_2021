@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 import test from 'ava';
-import { Board } from './Board';
+// import { Board } from './Board';
 
 import { bingoGameRunnerToLose, bingoGameRunnerToWin, boardArrayToBoard } from './day4';
 
