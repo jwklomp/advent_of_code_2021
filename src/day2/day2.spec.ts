@@ -6,7 +6,7 @@ import { PositionCommand } from './PositionCommand';
 import { positionCalculator, positionCalculatorWithAim } from './day2';
 
 test('positionCalculator', (t) => {
-  const fileName = './src/day2/input.txt';
+  const fileName = './src/day2/callSequence.txt';
 
   // const input: Array<PositionCommand> = [
   //   { commandType: "forward", amount: 5}
@@ -32,7 +32,7 @@ test('positionCalculator', (t) => {
 });
 
 test('positionCalculatorWithAim', (t) => {
-  const fileName = './src/day2/input.txt';
+  const fileName = './src/day2/callSequence.txt';
 
   // const input: Array<PositionCommand> = [
   //   { commandType: "forward", amount: 5}

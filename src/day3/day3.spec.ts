@@ -5,7 +5,7 @@ import test from 'ava';
 import { diagnosticsCalculatorGammaEpsilon, diagnosticsCalculatorLifeSupport } from './day3';
 
 test('diagnosticsCalculator', (t) => {
-  const fileName = './src/day3/input.txt';
+  const fileName = './src/day3/callSequence.txt';
 
   // const input = [
   //   '00100',
@@ -36,7 +36,7 @@ test('diagnosticsCalculator', (t) => {
 });
 
 test('diagnosticsCalculatorLifeSupport', (t) => {
-  const fileName = './src/day3/input.txt';
+  const fileName = './src/day3/callSequence.txt';
 
   // const input = [
   //   '00100',
