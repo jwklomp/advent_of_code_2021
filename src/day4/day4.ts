@@ -1,3 +1,5 @@
+import { transpose } from '../lib/utils';
+
 import { Board, BoardGridItem } from './Board';
 
 /**
@@ -21,7 +23,6 @@ export const bingoGameRunnerToWin = (callSequence: Array<number>, boards: Array<
 
   // assumption: only one board wins per round.
   const determineWinningBoard = (): Board | null => {
-    const gridLength = boards[0].length;
     let wonBoard = null;
 
     boards.forEach((board: Board) => {
@@ -29,11 +30,9 @@ export const bingoGameRunnerToWin = (callSequence: Array<number>, boards: Array<
         row.every((item: BoardGridItem) => item.marked)
       );
 
-      const hasColWon: boolean =
-        Array.from(Array(gridLength).keys()).some((it: number) => {
-          const elementsAtPosition: Array<BoardGridItem> = board.map((line: Array<BoardGridItem>) => line[it]);
-          return elementsAtPosition.every((item: BoardGridItem) => item.marked);
-        });
+      const hasColWon: boolean = transpose<BoardGridItem>(board).some((row: Array<BoardGridItem>): boolean =>
+        row.every((item: BoardGridItem) => item.marked)
+      );
 
       if (hasRowWon || hasColWon) {
         wonBoard = board;
@@ -88,18 +87,15 @@ export const bingoGameRunnerToLose = (callSequence: Array<number>, boards: Array
 
   // assumption: there will always be at least 1 board that has not won.
   const determineBoardsNotWon = (): Array<Board> => {
-    const gridLength = boards[0].length;
-
     return boards.filter((board: Board) => {
       const noRowsWon = !board.some((row: Array<BoardGridItem>): boolean =>
         row.every((item: BoardGridItem) => item.marked)
       );
 
       const noColsWon =
-        !Array.from(Array(gridLength).keys()).some((it: number) => {
-          const elementsAtPosition: Array<BoardGridItem> = board.map((line: Array<BoardGridItem>) => line[it]);
-          return elementsAtPosition.every((item: BoardGridItem) => item.marked);
-        });
+        !transpose<BoardGridItem>(board).some((row: Array<BoardGridItem>): boolean =>
+          row.every((item: BoardGridItem) => item.marked)
+        );
 
       // only return the board if not won.
       return noRowsWon && noColsWon;
