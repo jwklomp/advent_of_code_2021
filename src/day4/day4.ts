@@ -1,5 +1,10 @@
 import { Board, BoardGridItem } from './Board';
 
+/**
+ * Determine the score of the winning board
+ * @param callSequence
+ * @param boards
+ */
 export const bingoGameRunnerToWin = (callSequence: Array<number>, boards: Array<Board>): number => {
 
   const markNumberOnBoards = (number: number) => {
@@ -60,7 +65,11 @@ export const bingoGameRunnerToWin = (callSequence: Array<number>, boards: Array<
   return playNewRound(0);
 };
 
-
+/**
+ * Determine the score of the losing board
+ * @param callSequence
+ * @param boards
+ */
 export const bingoGameRunnerToLose = (callSequence: Array<number>, boards: Array<Board>): number => {
   let winningBoard: Board | null = null;
   let winningScore = 0;
