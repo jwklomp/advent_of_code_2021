@@ -1,10 +1,10 @@
 import test from 'ava';
 
-import { transpose } from './utils';
+import { range, transpose } from './utils';
 
 test('transpose', (t) => {
-  const input = [[1, 2, 3],[4, 5, 6]]
-  const transposed = transpose<number>(input)
+  const input = [[1, 2, 3], [4, 5, 6]];
+  const transposed = transpose<number>(input);
   t.is(transposed.length, 3);
 
   t.is(transposed[0].length, 2);
@@ -20,3 +20,9 @@ test('transpose', (t) => {
   t.is(transposed[2][1], 6);
 });
 
+test('range', (t) => {
+  t.deepEqual(range(1, 3), [1, 2, 3]);
+  t.deepEqual(range(1, 3, 2), [1, 3]);
+  t.deepEqual(range(3, 1), [3, 2, 1]);
+  t.deepEqual(range(3, 1, 2), [3, 1]);
+});

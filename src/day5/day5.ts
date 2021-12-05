@@ -3,14 +3,11 @@ import { range } from '../lib/utils';
 import { CartesianPoint, CoordinatePlane, DataPoint, Line } from './CoordinatePlane';
 
 export const hydrothermalVentsCalculator = (lines: Array<Line>): number => {
-  // remove diagonal lines
-  const linesToUse = lines.filter(line => line.isHorizontal || line.isVertical);
-
-  // determine x-min, x-max, y-min, y-max.
-  const xMin = Math.min(...linesToUse.map((line: Line) => line.start.x));
-  const xMax = Math.max(...linesToUse.map((line: Line) => line.end.x));
-  const yMin = Math.min(...linesToUse.map((line: Line) => line.start.y));
-  const yMax = Math.max(...linesToUse.map((line: Line) => line.end.y));
+  // determine min and max
+  const xMin = Math.min(...lines.map((line: Line) => line.start.x), ...lines.map((line: Line) => line.end.x));
+  const yMin = Math.min(...lines.map((line: Line) => line.start.y), ...lines.map((line: Line) => line.end.y));
+  const xMax = Math.max(...lines.map((line: Line) => line.start.x), ...lines.map((line: Line) => line.end.x));
+  const yMax = Math.max(...lines.map((line: Line) => line.start.y), ...lines.map((line: Line) => line.end.y));
 
   // generate CoordinatePlane
   const rangeX = range(xMin, xMax);
@@ -28,7 +25,7 @@ export const hydrothermalVentsCalculator = (lines: Array<Line>): number => {
   });
 
   // generate all Cartesian points
-  const cartesianPoints: Array<CartesianPoint> = linesToUse.flatMap((line: Line) => {
+  const cartesianPoints: Array<CartesianPoint> = lines.flatMap((line: Line) => {
     if (line.isHorizontal) { // horizontal = same y
       return range(line.start.x, line.end.x).map((x: number) => {
         return {
@@ -36,11 +33,20 @@ export const hydrothermalVentsCalculator = (lines: Array<Line>): number => {
           y: line.start.y
         };
       });
-    } else { // vertical = same x
+    } else if (line.isVertical) { // vertical = same x
       return range(line.start.y, line.end.y).map((y: number) => {
         return {
           x: line.start.x,
           y
+        };
+      });
+    } else { // diagonal, slightly more involved. An entry like 9,7 -> 7,9 covers points 9,7, 8,8, and 7,9.
+      return range(line.start.x, line.end.x).map((x: number) => { // result like 9,8,7  or 1,2,3
+        // determine correlation of y on x. should be 1 or -1
+        const correlation = Math.round((line.start.x - line.end.x) / (line.start.y - line.end.y));
+        return {
+          x,
+          y: line.start.y + (correlation * (x - line.start.x))
         };
       });
     }
