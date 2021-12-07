@@ -2,6 +2,8 @@ import fs from 'fs';
 
 import test from 'ava';
 
+import { range } from '../lib/utils';
+
 import {
   crabSubmarineFuelCalculatorExponentialConsumption,
   crabSubmarineFuelCalculatorLinearConsumption
@@ -41,4 +43,13 @@ test('crabSubmarineFuelCalculatorExponentialConsumption', (t) => {
   const result = crabSubmarineFuelCalculatorExponentialConsumption(data);
 
   t.is(result, 100220525);
+});
+
+test('summation', (t) => {
+  const sumFn = (x: number) => x * (x + 1) / 2;
+  const nr = 10000
+  const r1 = range(1, nr).reduce((partial, a) => partial + a, 0);
+  const r2 = sumFn(nr)
+  t.is(r1, r2);
+
 });
