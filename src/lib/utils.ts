@@ -19,3 +19,8 @@ export const range = (start: number, stop: number, step = 1): Array<number> =>
   start <= stop ?
     Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step))
     : Array.from({ length: (start - stop) / step + 1 }, (_, i) => stop + (i * step)).reverse();
+
+export const average = (arr: Array<number>): number => arr.reduce((a,b) => a + b, 0) / arr.length;
+
+export const getFirstIndexOfMinValue = (arr: Array<number>): number =>
+  arr.reduce((r, v, i, a) => v >= a[r] ? r : i, -1);
