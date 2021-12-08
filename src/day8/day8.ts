@@ -49,13 +49,13 @@ const processLine = (line: SegmentInfoLine): number => {
    *   E| - |F
    *    --G--
    */
-  // process ONE.                                                                               C+F known
+  // process ONE.                                                               C+F known
   const patternOne: string = signalPatternsSorted.filter(
     (it) => it.length === 2
   )[0]; // 2 char string
   const segC_F: Array<string> = patternOne.split('');
 
-  // process SEVEN                                                                             A certain, C+F known
+  // process SEVEN                                                              A certain, C+F known
   const patternSeven: string = signalPatternsSorted.filter(
     (it) => it.length === 3
   )[0]; // 3 char string
@@ -63,7 +63,7 @@ const processLine = (line: SegmentInfoLine): number => {
     .split('')
     .filter((it) => !segC_F.includes(it))[0];
 
-  // process FOUR, B+D known                                                                    A certain, B+D known, C+F known
+  // process FOUR, B+D known                                                    A certain, B+D known, C+F known
   const patternFour: string = signalPatternsSorted.filter(
     (it) => it.length === 4
   )[0]; // 4 char string
@@ -77,7 +77,7 @@ const processLine = (line: SegmentInfoLine): number => {
     (it) =>
       it.length === 6 && stringContainsTokenized(it, [A, ...segC_F, ...segB_D])
   )[0]; // 6 char string
-  // A certain, C+F known. B+D known, so can determine G                                       A G certain, C+F known. B+D known
+  //                                                                            A G certain, C+F known. B+D known
   const G: string = patternNine
     .split('') // array with single characters
     .filter((it) => !A.includes(it))
@@ -90,7 +90,7 @@ const processLine = (line: SegmentInfoLine): number => {
     (it) => it.length === 7
   )[0];
 
-  const E: string = patternEight                                                               // A E G certain, C+F known. B+D known
+  const E: string = patternEight                                                // A E G certain, C+F known. B+D known
     .split('')
     .filter((it) => !patternNine.split('').includes(it))[0];
 
@@ -102,11 +102,11 @@ const processLine = (line: SegmentInfoLine): number => {
       it.length === 6 && it !== patternNine && stringContainsTokenized(it, segB_D)
   )[0]; // 6 char string
 
-  const C: string = patternNine                                                               // A C E G certain, C+F known. B+D known
+  const C: string = patternNine                                                 // A C E G certain, C+F known. B+D known
     .split('')
     .filter((it) => !patternSix.includes(it))[0];
 
-  const F: string = segC_F.filter((it) => it !== C)[0];                               // A C E F G certain, B+D known
+  const F: string = segC_F.filter((it) => it !== C)[0];                  // A C E F G certain, B+D known
 
   // ZERO has B but not D
   const patternZero: string = signalPatternsSorted.filter(
@@ -116,7 +116,7 @@ const processLine = (line: SegmentInfoLine): number => {
 
   const B: string = segB_D.filter((it) => patternZero.includes(it))[0];
 
-  const D: string = segB_D.filter((it) => !patternZero.includes(it))[0];
+  const D: string = segB_D.filter((it) => !patternZero.includes(it))[0]; // all certain
 
   // Create the digits based on the determined constants and sort them
   const ZERO: string = [A, B, C, E, F, G].sort().join('');
