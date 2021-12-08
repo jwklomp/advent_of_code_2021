@@ -1,4 +1,5 @@
 import { stringContainsTokenized } from '../lib/utils';
+
 import { SegmentInfoLine } from './SegmentInto';
 
 export const sevenSegmentSearchPartOne = (
@@ -16,7 +17,7 @@ export const sevenSegmentSearchPartOne = (
     nrOfSegmentsOne,
     nrOfSegmentsFour,
     nrOfSegmentsSeven,
-    nrOfSegmentsEight
+    nrOfSegmentsEight,
   ];
 
   const matchesPerLine: Array<number> = segmentInfoArray.map(
@@ -31,6 +32,8 @@ export const sevenSegmentSearchPartOne = (
 
 const processLine = (line: SegmentInfoLine): number => {
   const { signalPatterns, outputValue } = line;
+
+  // sort all the values because in the actual data the chars in the strings are shuffled.
   const signalPatternsSorted: Array<string> = signalPatterns.map((it) =>
     it.split('').sort().join('')
   );
@@ -46,13 +49,13 @@ const processLine = (line: SegmentInfoLine): number => {
    *   E| - |F
    *    --G--
    */
-    // process ONE.                                                                                               C+F known
+  // process ONE.                                                                               C+F known
   const patternOne: string = signalPatternsSorted.filter(
-      (it) => it.length === 2
-    )[0]; // 2 char string
+    (it) => it.length === 2
+  )[0]; // 2 char string
   const segC_F: Array<string> = patternOne.split('');
 
-  // process SEVEN, A = certain                                                                                 A certain, C+F known
+  // process SEVEN                                                                             A certain, C+F known
   const patternSeven: string = signalPatternsSorted.filter(
     (it) => it.length === 3
   )[0]; // 3 char string
@@ -60,7 +63,7 @@ const processLine = (line: SegmentInfoLine): number => {
     .split('')
     .filter((it) => !segC_F.includes(it))[0];
 
-  // process FOUR, B+D known                                                                                    A certain, B+D known, C+F known
+  // process FOUR, B+D known                                                                    A certain, B+D known, C+F known
   const patternFour: string = signalPatternsSorted.filter(
     (it) => it.length === 4
   )[0]; // 4 char string
@@ -68,44 +71,52 @@ const processLine = (line: SegmentInfoLine): number => {
     .split('')
     .filter((it) => !segC_F.includes(it));
 
-  // THREE has both CF, so we can determine 3
-  // filter on element with length 5 and that has C and F
-  const patternThree: string = signalPatternsSorted.filter(
-    (it) => it.length === 5 && stringContainsTokenized(it, patternSeven.split(""))
-  )[0]; // 5 char string
-  // A certain, C+F known. B+D known, so can determine G                                                        A G certain, C+F known. B+D known
-  const G: string = patternThree
-    .split('')
+  // process NINE
+  // filter on element with length 6 and that have CF, BD and A so we can determine
+  const patternNine: string = signalPatternsSorted.filter(
+    (it) =>
+      it.length === 6 && stringContainsTokenized(it, [A, ...segC_F, ...segB_D])
+  )[0]; // 6 char string
+  // A certain, C+F known. B+D known, so can determine G                                       A G certain, C+F known. B+D known
+  const G: string = patternNine
+    .split('') // array with single characters
+    .filter((it) => !A.includes(it))
     .filter((it) => !segC_F.includes(it))
     .filter((it) => !segB_D.includes(it))[0];
 
-  // FIVE = Three but with B iso C
-  // so element in FIVE not in Three = B element in three not in five = C                                       B certain C certain, so D certain so F certain
-  const twoOrFive: Array<string> = signalPatternsSorted.filter(
-    (it) => it.length === 5 && it !== patternThree
-  );
-  const patternFive: string = twoOrFive.filter(
-    (it) => it.includes(segB_D[0]) || it.includes(segB_D[1])
-  )[0];
-  const B: string = patternFive
-    .split('')
-    .filter((it) => !patternThree.includes(it))[0];
-  const C: string = patternThree
-    .split('')
-    .filter((it) => !patternFive.includes(it))[0];
-  const D: string = segB_D.filter((it) => it !== B)[0];
-  const F: string = segC_F.filter((it) => it !== C)[0];
-
-  // all except E are known. Derive this from EIGHT by removing all known elements.
+  // process EIGHT = Nine + E
+  // so element in NINE not in Three = B element in three not in five = C
   const patternEight: string = signalPatternsSorted.filter(
     (it) => it.length === 7
   )[0];
-  const E: string = patternEight
+
+  const E: string = patternEight                                                               // A E G certain, C+F known. B+D known
     .split('')
-    .filter(
-      (it) =>
-        it !== A && it !== B && it !== C && it !== D && it !== F && it !== G
-    )[0];
+    .filter((it) => !patternNine.split('').includes(it))[0];
+
+  // the element in 9 that is not in 6 must be C
+  // process SIX length 6 has both CF, BD and A so we can determine
+  // filter on element with length 6 that is not pattern 9 and has segments B and D (this filters out 0)
+  const patternSix: string = signalPatternsSorted.filter(
+    (it) =>
+      it.length === 6 && it !== patternNine && stringContainsTokenized(it, segB_D)
+  )[0]; // 6 char string
+
+  const C: string = patternNine                                                               // A C E G certain, C+F known. B+D known
+    .split('')
+    .filter((it) => !patternSix.includes(it))[0];
+
+  const F: string = segC_F.filter((it) => it !== C)[0];                               // A C E F G certain, B+D known
+
+  // ZERO has B but not D
+  const patternZero: string = signalPatternsSorted.filter(
+    (it) =>
+      it.length === 6 && it !== patternNine && it !== patternSix
+  )[0]; // 6 char string
+
+  const B: string = segB_D.filter((it) => patternZero.includes(it))[0];
+
+  const D: string = segB_D.filter((it) => !patternZero.includes(it))[0];
 
   // Create the digits based on the determined constants and sort them
   const ZERO: string = [A, B, C, E, F, G].sort().join('');
@@ -150,13 +161,10 @@ const processLine = (line: SegmentInfoLine): number => {
     }
   );
 
-  const returnValue = (
-    mappedOutputDigitStringsArray[0] * 1000 +
+  return mappedOutputDigitStringsArray[0] * 1000 +
     mappedOutputDigitStringsArray[1] * 100 +
     mappedOutputDigitStringsArray[2] * 10 +
-    mappedOutputDigitStringsArray[3]
-  );
-  return returnValue;
+    mappedOutputDigitStringsArray[3];
 };
 
 export const sevenSegmentSearchPartTwo = (
@@ -172,6 +180,6 @@ export const lineToSegmentInfoLine = (rawLine: string): SegmentInfoLine => {
 
   return {
     signalPatterns: spRaw.split(' '),
-    outputValue: ovRaw.split(' ')
+    outputValue: ovRaw.split(' '),
   };
 };

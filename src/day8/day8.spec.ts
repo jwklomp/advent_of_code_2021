@@ -56,5 +56,5 @@ test('sevenSegmentSearchPartTwo', (t) => {
 
   const result = sevenSegmentSearchPartTwo(data);
 
-  t.is(result, 365);
+  t.is(result, 975706);
 });
