@@ -20,7 +20,28 @@ export const range = (start: number, stop: number, step = 1): Array<number> =>
     Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step))
     : Array.from({ length: (start - stop) / step + 1 }, (_, i) => stop + (i * step)).reverse();
 
-export const average = (arr: Array<number>): number => arr.reduce((a,b) => a + b, 0) / arr.length;
+export const average = (arr: Array<number>): number => arr.reduce((a, b) => a + b, 0) / arr.length;
 
 export const getFirstIndexOfMinValue = (arr: Array<number>): number =>
   arr.reduce((r, v, i, a) => v >= a[r] ? r : i, -1);
+
+
+export const stringContainsTokenized = (stringToCheck: string, checkValues: Array<string>) => {
+  const checkTokenized = stringToCheck.split('');
+  return checkValues.every(it => checkTokenized.includes(it));
+};
+
+
+export const binarySort = (arr: number[], value: number): number => {
+  const indexToCheck = Math.floor((arr.length - 1) / 2);
+  const iValue = arr[indexToCheck];
+
+  if (value === iValue) return indexToCheck;
+  if (arr.length === 1) return (iValue > value) ? ~0 : ~1; // bitwize not
+  if (value < iValue) return binarySort(arr.slice(0, indexToCheck), value);
+
+  const subResult = binarySort(arr.slice(indexToCheck + 1), value);
+  return subResult >= 0
+    ? indexToCheck + 1 + subResult
+    : ~(indexToCheck + 1 + ~subResult);
+};
