@@ -79,13 +79,11 @@ export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
     totalCollectedPoints: Array<Point>
   ): Array<Point> => {
     const collectedPoints: Array<Point> = [];
-    console.log('processing point with rowIndex colIndex', point.rowIndex, point.colIndex);
 
     // process rows <- and ->
     if (point.rowIndex > 0) {  // will subtract 1 so needs to be > 0
       const previousRowPoint: Point = updatedHeightMap[point.rowIndex - 1][point.colIndex];
       if (!previousRowPoint.processed && previousRowPoint.height !== 9 && previousRowPoint.height > point.height) {
-        console.log('adding point with rowIndex colIndex', previousRowPoint.rowIndex, previousRowPoint.colIndex);
         previousRowPoint.processed = true;
         collectedPoints.push(previousRowPoint);
       }
@@ -94,7 +92,6 @@ export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
     if (point.rowIndex < rowLength - 1) {  // will add 1 so needs to be > 0
       const nextRowPoint: Point = updatedHeightMap[point.rowIndex + 1][point.colIndex];
       if (!nextRowPoint.processed && nextRowPoint.height !== 9 && nextRowPoint.height > point.height) {
-        console.log('adding point with rowIndex colIndex', nextRowPoint.rowIndex, nextRowPoint.colIndex);
         nextRowPoint.processed = true;
         collectedPoints.push(nextRowPoint);
       }
@@ -105,7 +102,6 @@ export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
     if (point.colIndex > 0) {  // will subtract 1 so needs to be > 0
       const previousColPoint: Point = currentRow[point.colIndex - 1];
       if (!previousColPoint.processed && previousColPoint.height !== 9 && previousColPoint.height > point.height) {
-        console.log('adding point with rowIndex colIndex', previousColPoint.rowIndex, previousColPoint.colIndex);
         previousColPoint.processed = true;
         collectedPoints.push(previousColPoint);
       }
@@ -114,14 +110,12 @@ export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
     if (point.colIndex < colLength - 1) {  // will add 1 so needs to be > 0
       const nextColPoint: Point = currentRow[point.colIndex + 1];
       if (!nextColPoint.processed && nextColPoint.height !== 9 && nextColPoint.height > point.height) {
-        console.log('adding point with rowIndex colIndex', nextColPoint.rowIndex, nextColPoint.colIndex);
         nextColPoint.processed = true;
         collectedPoints.push(nextColPoint);
       }
     }
 
     if (collectedPoints.length === 0) {
-      console.log('total collected points', totalCollectedPoints.length);
       return totalCollectedPoints;
     } else {
       return collectedPoints.flatMap((_point: Point) => {
@@ -137,10 +131,8 @@ export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
     (row: Array<Point>): Array<number> =>
       row.map((point: Point) => {
           if (point.lowestRow && point.lowestCol) {
-            console.log('Start with lowest point: ', point.rowIndex, point.colIndex);
             const result = determineHigherAdjacentPointsForPoint(point, []);
             const unique = [...new Set(result)]
-            console.log('End with lowest point: ', point.rowIndex, point.colIndex, " result: ", unique.length);
             return unique.length + 1
           } else {
             return 0;
@@ -148,6 +140,7 @@ export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
         }
       )
   );
+
   const sortedDescending  = basinSizes.sort(function(a,b){return a - b}).reverse()
 
   return sortedDescending[0] * sortedDescending[1] * sortedDescending[2];
