@@ -1,37 +1,56 @@
+import { transpose } from '../lib/utils';
 
-export const sevenSegmentSearchPartOne = (
-  segmentInfoArray: Array<SegmentInfoLine>
-): number => {
-  // 10 signal patterns (decodeInfo) + 4 digit output value (to convert)
+import { Point } from './Point';
 
-  // 4 digits of 7 segments a-g
-  const nrOfSegmentsOne = 2;
-  const nrOfSegmentsFour = 4;
-  const nrOfSegmentsSeven = 3;
-  const nrOfSegmentsEight = 7;
+export const lowPointsCalculator = (heightMap: Array<Array<Point>>): number => {
+  const rowLength: number = heightMap[0].length;
+  const colLength: number = heightMap.length;
 
-  const searchSegments: Array<number> = [
-    nrOfSegmentsOne,
-    nrOfSegmentsFour,
-    nrOfSegmentsSeven,
-    nrOfSegmentsEight,
-  ];
+  // mark all lowest in row
+  heightMap.forEach((row: Array<Point>) => {
+    row.forEach((point: Point, index: number) => {
+      if (index === 0) {
+        // first
+        point.lowestRow = point.height < row[1].height;
+      } else if (index === rowLength - 1) {
+        // last
+        point.lowestRow = point.height < row[index - 1].height;
+      } else {
+        // in between
+        point.lowestRow =
+          point.height < row[index - 1].height &&
+          point.height < row[index + 1].height;
+      }
+    });
+  });
 
-  const matchesPerLine: Array<number> = segmentInfoArray.map(
-    (segmentInfoLine: SegmentInfoLine) =>
-      segmentInfoLine.outputValue.filter((item: string) =>
-        searchSegments.includes(item.length)
-      ).length
-  );
+  // transpose the array, so colls become rows etc
+  const transposedHeightMap = transpose(heightMap);
 
-  return matchesPerLine.reduce((partial, a) => partial + a, 0);
-};
+  // repeat with transposed, this marks the lowestCol
+  transposedHeightMap.forEach((row: Array<Point>) => {
+    row.forEach((point: Point, index: number) => {
+      if (index === 0) {
+        // first
+        point.lowestCol = point.height < row[1].height;
+      } else if (index === colLength - 1) {
+        // last
+        point.lowestCol = point.height < row[index - 1].height;
+      } else {
+        // in between
+        point.lowestCol =
+          point.height < row[index - 1].height &&
+          point.height < row[index + 1].height;
+      }
+    });
+  });
 
-export const lineToSegmentInfoLine = (rawLine: string): SegmentInfoLine => {
-  const [spRaw, ovRaw] = rawLine.split(' | ');
-
-  return {
-    signalPatterns: spRaw.split(' '),
-    outputValue: ovRaw.split(' '),
-  };
+  // filter out all with lowestCol and lowestRow true and count
+  return transposedHeightMap
+    .flatMap((row: Array<Point>) =>
+      row.map((point: Point) =>
+        point.lowestRow && point.lowestCol ? point.height + 1 : 0
+      )
+    )
+    .reduce((partial, a) => partial + a, 0);
 };

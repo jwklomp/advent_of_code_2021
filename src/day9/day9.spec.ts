@@ -2,31 +2,42 @@ import fs from 'fs';
 
 import test from 'ava';
 
-import { SegmentInfoLine } from './SegmentInto';
-import {
-  lineToSegmentInfoLine,
-  sevenSegmentSearchPartOne, sevenSegmentSearchPartTwo
-} from './day9';
+import { Point } from './Point';
+import { lowPointsCalculator } from './day9';
 
-test('sevenSegmentSearchPartOne', (t) => {
-  const fileNameTest = './src/day8/inputTest.txt';
-  const rawDataTest = fs.readFileSync(fileNameTest, 'utf8');
+test('lowPointsCalculator', (t) => {
+  const rawDataTest: Array<string> = [
+    '2199943210',
+    '3987894921',
+    '9856789892',
+    '8767896789',
+    '9899965678',
+  ];
 
-  const dataRawTest: Array<string> = rawDataTest.split('\r\n');
-  const dataTest: Array<SegmentInfoLine> = dataRawTest.filter(it => it.length > 0).map(it => lineToSegmentInfoLine(it));
+  const dataTest: Array<Array<Point>> = rawDataTest.map((it: string) =>
+    it.split('').map((it) => {
+      return { height: parseInt(it), lowestRow: false, lowestCol: false };
+    })
+  );
 
-  const testResult = sevenSegmentSearchPartOne(dataTest);
+  const testResult = lowPointsCalculator(dataTest);
 
-  t.is(testResult, 26);
+  t.is(testResult, 15);
 
-  const fileName = './src/day8/input.txt';
+  const fileName = './src/day9/input.txt';
   const rawData = fs.readFileSync(fileName, 'utf8');
 
-  const dataRaw: Array<string> = rawData.split('\r\n');
-  const data: Array<SegmentInfoLine> = dataRaw.filter(it => it.length > 0).map(it => lineToSegmentInfoLine(it));
+  const dataRaw: Array<string> = rawData
+    .split('\r\n')
+    .filter((it) => it.length > 0);
 
-  const result = sevenSegmentSearchPartOne(data);
+  const data: Array<Array<Point>> = dataRaw.map((it: string) =>
+    it.split('').map((it) => {
+      return { height: parseInt(it), lowestRow: false, lowestCol: false };
+    })
+  );
 
-  t.is(result, 365);
+  const result = lowPointsCalculator(data);
+
+  t.is(result, 535);
 });
-
