@@ -132,8 +132,7 @@ export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
       row.map((point: Point) => {
           if (point.lowestRow && point.lowestCol) {
             const result = determineHigherAdjacentPointsForPoint(point, []);
-            const unique = [...new Set(result)]
-            return unique.length + 1
+            return [...new Set(result)].length + 1
           } else {
             return 0;
           }
