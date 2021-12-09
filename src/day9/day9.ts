@@ -2,17 +2,35 @@ import { transpose } from '../lib/utils';
 
 import { Point } from './Point';
 
+/**
+ * Part one of the challenge
+ * @param heightMap
+ */
 export const lowPointsCalculator = (heightMap: Array<Array<Point>>): number => {
   const rowLength: number = heightMap[0].length;
   const colLength: number = heightMap.length;
 
+  const updatedHeightMap = markLowestPoints(heightMap, colLength, rowLength)
+
+  // filter out all with lowestCol and lowestRow true and count
+  return updatedHeightMap
+    .flatMap((row: Array<Point>) =>
+      row.map((point: Point) =>
+        point.lowestRow && point.lowestCol ? point.height + 1 : 0
+      )
+    )
+    .reduce((partial, a) => partial + a, 0);
+};
+
+function markLowestPoints(heightMap: Array<Array<Point>>, colLength: number, rowLength: number) {
   // mark all lowest in row
   heightMap.forEach((row: Array<Point>) => {
     row.forEach((point: Point, index: number) => {
+      // now processing cols in row!
       if (index === 0) {
         // first
         point.lowestRow = point.height < row[1].height;
-      } else if (index === rowLength - 1) {
+      } else if (index === colLength - 1) {
         // last
         point.lowestRow = point.height < row[index - 1].height;
       } else {
@@ -33,7 +51,7 @@ export const lowPointsCalculator = (heightMap: Array<Array<Point>>): number => {
       if (index === 0) {
         // first
         point.lowestCol = point.height < row[1].height;
-      } else if (index === colLength - 1) {
+      } else if (index === rowLength - 1) {
         // last
         point.lowestCol = point.height < row[index - 1].height;
       } else {
@@ -44,13 +62,93 @@ export const lowPointsCalculator = (heightMap: Array<Array<Point>>): number => {
       }
     });
   });
+  return transposedHeightMap;
+}
 
-  // filter out all with lowestCol and lowestRow true and count
-  return transposedHeightMap
-    .flatMap((row: Array<Point>) =>
-      row.map((point: Point) =>
-        point.lowestRow && point.lowestCol ? point.height + 1 : 0
+/**
+ * Part two of the challenge
+ * @param heightMap
+ */
+export const basinSizeCalculator = (heightMap: Array<Array<Point>>): number => {
+  const rowLength: number = heightMap.length;
+  const colLength: number = heightMap[0].length;
+  const updatedHeightMap = transpose(markLowestPoints(heightMap, colLength, rowLength));
+
+  const determineHigherAdjacentPointsForPoint = (
+    point: Point,
+    totalCollectedPoints: Array<Point>
+  ): Array<Point> => {
+    const collectedPoints: Array<Point> = [];
+    console.log('processing point with rowIndex colIndex', point.rowIndex, point.colIndex);
+
+    // process rows <- and ->
+    if (point.rowIndex > 0) {  // will subtract 1 so needs to be > 0
+      const previousRowPoint: Point = updatedHeightMap[point.rowIndex - 1][point.colIndex];
+      if (!previousRowPoint.processed && previousRowPoint.height !== 9 && previousRowPoint.height > point.height) {
+        console.log('adding point with rowIndex colIndex', previousRowPoint.rowIndex, previousRowPoint.colIndex);
+        previousRowPoint.processed = true;
+        collectedPoints.push(previousRowPoint);
+      }
+    }
+
+    if (point.rowIndex < rowLength - 1) {  // will add 1 so needs to be > 0
+      const nextRowPoint: Point = updatedHeightMap[point.rowIndex + 1][point.colIndex];
+      if (!nextRowPoint.processed && nextRowPoint.height !== 9 && nextRowPoint.height > point.height) {
+        console.log('adding point with rowIndex colIndex', nextRowPoint.rowIndex, nextRowPoint.colIndex);
+        nextRowPoint.processed = true;
+        collectedPoints.push(nextRowPoint);
+      }
+    }
+
+    // process column up and down
+    const currentRow = updatedHeightMap.filter((_row, rowIndex) => rowIndex === point.rowIndex)[0];
+    if (point.colIndex > 0) {  // will subtract 1 so needs to be > 0
+      const previousColPoint: Point = currentRow[point.colIndex - 1];
+      if (!previousColPoint.processed && previousColPoint.height !== 9 && previousColPoint.height > point.height) {
+        console.log('adding point with rowIndex colIndex', previousColPoint.rowIndex, previousColPoint.colIndex);
+        previousColPoint.processed = true;
+        collectedPoints.push(previousColPoint);
+      }
+    }
+
+    if (point.colIndex < colLength - 1) {  // will add 1 so needs to be > 0
+      const nextColPoint: Point = currentRow[point.colIndex + 1];
+      if (!nextColPoint.processed && nextColPoint.height !== 9 && nextColPoint.height > point.height) {
+        console.log('adding point with rowIndex colIndex', nextColPoint.rowIndex, nextColPoint.colIndex);
+        nextColPoint.processed = true;
+        collectedPoints.push(nextColPoint);
+      }
+    }
+
+    if (collectedPoints.length === 0) {
+      console.log('total collected points', totalCollectedPoints.length);
+      return totalCollectedPoints;
+    } else {
+      return collectedPoints.flatMap((_point: Point) => {
+        return determineHigherAdjacentPointsForPoint(
+          _point,
+          [...new Set([...totalCollectedPoints, ...collectedPoints])]
+        );
+      });
+    }
+  };
+
+  const basinSizes: Array<number> = updatedHeightMap.flatMap(
+    (row: Array<Point>): Array<number> =>
+      row.map((point: Point) => {
+          if (point.lowestRow && point.lowestCol) {
+            console.log('Start with lowest point: ', point.rowIndex, point.colIndex);
+            const result = determineHigherAdjacentPointsForPoint(point, []);
+            const unique = [...new Set(result)]
+            console.log('End with lowest point: ', point.rowIndex, point.colIndex, " result: ", unique.length);
+            return unique.length + 1
+          } else {
+            return 0;
+          }
+        }
       )
-    )
-    .reduce((partial, a) => partial + a, 0);
+  );
+  const sortedDescending  = basinSizes.sort(function(a,b){return a - b}).reverse()
+
+  return sortedDescending[0] * sortedDescending[1] * sortedDescending[2];
 };
