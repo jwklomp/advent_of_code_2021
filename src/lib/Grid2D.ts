@@ -7,12 +7,12 @@ export interface Cell<T> {
 /**
  * Model a 2 dimensional array as a grid including some util functions
  * The outer array will become rows (y), the inner cols (x)
- *          cols
+ *          cols (x)
  *      0-------x ------>
  * rows |
- *      y
+ * (y)  y
  *      |
- *
+ *      V
  */
 export class Grid2D<T> {
   readonly rowLength: number;
@@ -45,10 +45,10 @@ export class Grid2D<T> {
 
   /**
    * Get the adjacent cells of a cell. Can return at most 4 cells and at least 2 when in corner
-   *
-   *        x
-   *      x/O/x
-   *        x
+   *    |  --x-->
+   *    |    x
+   *    y  x/O/x
+   *    |    x
    */
   adjacent<T>(cell: Cell<T>): Array<Cell<T>> {
     const adjacentCells: Array<Cell<T>> = [];
@@ -74,9 +74,9 @@ export class Grid2D<T> {
 
   /**
    * Get all surrounding cells of a cell. Can return at most 8 cells and at least 3 when in corner
-   * --x->
-   * |    x x x
-   * y    x/O/x
+   *   --x->
+   *  |   x x x
+   *  y   x/O/x
    *      x x x
    */
   surrounding<T>(cell: Cell<T>): Array<Cell<T>> {
