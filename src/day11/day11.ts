@@ -1,49 +1,33 @@
-/**
- * Part one of the challenge
- * @param lines
- */
 import { Cell, Grid2D } from '../lib/Grid2D';
 
 export const octopusFlashCounter = (grid: Grid2D<number>, steps: number): number => {
-  let totalFlashes = 0;
+  let totalFlashes = 0; // alas, not pure
   let prevFlashes = 0;
-  let flashedInStep: Array<Cell<number>> = [];
 
   const doFlashRound = (cells: Array<Cell<number>>, initial = false) => {
-    const collectedSurroundingFlashRound: Array<Cell<number>> = [];
-
+    const collectedSurrounding: Array<Cell<number>> = [];
     cells.forEach((cell: Cell<number>) => {
       if (cell.value > 0 || initial) {
-        // Increase all energy levels by 1
-        const value = cell.value;
-        cell.value = value + 1;
+        cell.value = cell.value + 1; // Increase all energy levels by 1
 
-        // determine if > 9, if so determine surrounding and flash
         if (cell.value > 9) {
-          flashedInStep.push(cell);
           totalFlashes = totalFlashes + 1;
           cell.value = 0;
-          // get surrounding cells
           const surroundingCells = grid.surrounding(cell);
           if (surroundingCells.length > 0) {
-            collectedSurroundingFlashRound.push(...surroundingCells);
+            collectedSurrounding.push(...surroundingCells);
           }
         }
       }
     });
 
-    // note contains duplicates if cell should be flashed more than once. This is a legitimate situation.
-    const collectedNonFlashed = collectedSurroundingFlashRound.filter(it => !flashedInStep.includes(it));
-    if (collectedNonFlashed.length > 0) {
-      doFlashRound(collectedNonFlashed, false);
+    if (collectedSurrounding.length > 0) {
+      doFlashRound(collectedSurrounding, false);
     }
   };
 
   const doStep = (remainingSteps: number): void => {
-    flashedInStep = []; // reset flashed cells per round
-    const cells = grid.getCells();
-    // initial run in a step is with all cells
-    doFlashRound(cells, true);
+    doFlashRound(grid.getCells(), true);
     if ((totalFlashes - prevFlashes) === 100) {
       console.log("all flashed in step ", steps - remainingSteps + 1);
     }
