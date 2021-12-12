@@ -2,17 +2,28 @@ import fs from 'fs';
 
 import test from 'ava';
 
-import { syntaxCheckerCorrupted, syntaxCheckerIncomplete } from './day12';
+import { passagePathCalculator } from './day12';
 
 test('syntaxCheckerCorrupted', (t) => {
 
-  const fileNameTest = './src/day10/inputTest.txt';
+  const fileNameTest = './src/day12/inputTest.txt';
   const rawDataTest = fs.readFileSync(fileNameTest, 'utf8');
 
-  const dataRawTest: Array<string> = rawDataTest.split('\r\n').filter(it => it.length > 0);
+  const dataAsStringsTest: Array<string> = rawDataTest.split('\r\n').filter(it => it.length > 0);
 
-  const testResult = syntaxCheckerCorrupted(dataRawTest);
+  const testResult = passagePathCalculator(dataAsStringsTest);
 
-  t.is(testResult, 26397);
+  t.is(testResult, 226);
+
+
+  const fileName = './src/day12/input.txt';
+  const rawData = fs.readFileSync(fileName, 'utf8');
+
+  const dataAsStrings: Array<string> = rawData.split('\r\n').filter(it => it.length > 0);
+
+  const result = passagePathCalculator(dataAsStrings);
+
+  t.is(result, 3576);
+
 
 });
