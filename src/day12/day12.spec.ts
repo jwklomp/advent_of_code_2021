@@ -6,14 +6,14 @@ import { passagePathCalculator } from './day12';
 
 test('syntaxCheckerCorrupted', (t) => {
 
-  const fileNameTest = './src/day12/inputTest.txt';
-  const rawDataTest = fs.readFileSync(fileNameTest, 'utf8');
-
-  const dataAsStringsTest: Array<string> = rawDataTest.split('\r\n').filter(it => it.length > 0);
-
-  const testResult = passagePathCalculator(dataAsStringsTest);
-
-  t.is(testResult, 226);
+  // const fileNameTest = './src/day12/inputTest.txt';
+  // const rawDataTest = fs.readFileSync(fileNameTest, 'utf8');
+  //
+  // const dataAsStringsTest: Array<string> = rawDataTest.split('\r\n').filter(it => it.length > 0);
+  //
+  // const testResult = passagePathCalculator(dataAsStringsTest);
+  //
+  // t.is(testResult, 3509);
 
 
   const fileName = './src/day12/input.txt';
@@ -23,7 +23,7 @@ test('syntaxCheckerCorrupted', (t) => {
 
   const result = passagePathCalculator(dataAsStrings);
 
-  t.is(result, 3576);
+  t.is(result, 84271);
 
 
 });

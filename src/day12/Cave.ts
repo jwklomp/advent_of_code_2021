@@ -1,6 +1,6 @@
 export interface Cave {
   code: string;
-  isAllowedOnce: boolean;
+  nrRemainingVisits: number;
   isStart: boolean;
   isEnd: boolean;
 }
