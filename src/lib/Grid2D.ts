@@ -43,6 +43,10 @@ export class Grid2D<T> {
     return this.getCells().filter(it => filterFn(it));
   }
 
+  getCellByCoordinate(x: number, y: number): Cell<T> {
+    return this.grid[y][x] as unknown as Cell<T>
+  }
+
   /**
    * Get the adjacent cells of a cell. Can return at most 4 cells and at least 2 when in corner
    *    |  --x-->
