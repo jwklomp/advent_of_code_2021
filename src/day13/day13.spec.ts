@@ -16,5 +16,5 @@ test('origamiDotCounter', (t) => {
   const rawData: Array<string> = fs.readFileSync(fileName, 'utf8').split('\r\n').filter(it => it.length > 0);
   const numericArray: Array<Array<number>> = rawData.map(it => it.split(',').map(it => parseInt(it)));
   const result = origamiDotCounter(numericArray);
-  t.is(result, 755);
+  t.is(result, 101);
 });
