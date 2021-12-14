@@ -1,0 +1,30 @@
+- array
+per step
+- clone array 
+  per insertion (NN)
+  - determine in old array all places where char + char+1 = = N + N 
+- do all insertions  
+  - insert per char in new array. How to determine correct place to insert? index to insert and than increase per insertion if previous insertion lower index
+
+use set to create unique elements. per element use filter + length	
+
+NNCB
+The first pair (NN) matches the rule NN -> C, so element C is inserted between the first N and the second N.
+NCNCB
+  =
+  
+The second pair (NC) matches the rule NC -> B, so element B is inserted between the N and the C.
+Note that it is NOT inserted in the NC that was created above
+NCNBCB
+   = 
+   
+The third pair (CB) matches the rule CB -> H, so element H is inserted between the C and the B.
+
+
+expected NCNBCHB
+			  = 
+actual	 NCNBCHB
+
+    
+expected NBCCNBBBCBHCB
+actual   NCNBBCBCBBHCB
