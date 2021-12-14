@@ -51,7 +51,7 @@ export const polymerCreator = (
   const nrOfSteps = 40;
   const chars = ['B', 'C', 'F', 'H', 'K', 'N', 'O', 'P', 'S', 'V'];
 
-  const charCounter = new Map<string, number>(chars.map(i => [i, 0]));
+  const charCounter = new Map<string, number>(chars.map(i => [i, 0])); // map with number of times a character occurs
   const startArray = startString.split('');
   startArray.forEach(it => {
     const current = charCounter.get(it) ?? 0;
@@ -59,7 +59,7 @@ export const polymerCreator = (
   });
 
   const combinations = chars.flatMap(first => chars.map(second => first + second));
-  const combinationCounter = new Map<string, number>(combinations.map(i => [i, 0]));
+  const combinationCounter = new Map<string, number>(combinations.map(i => [i, 0])); // map with number of times a combination occurs
   startArray.forEach((first, index) => {
     if (index < startArray.length - 1) { // not last character
       const second = startString[index + 1];
