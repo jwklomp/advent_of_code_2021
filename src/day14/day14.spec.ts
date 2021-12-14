@@ -12,7 +12,7 @@ test('polymerCreator', (t) => {
   // // @ts-ignore
   // const stringArray: Array<[string, string]> = rawDataTest.map(it => it.split(' -> '));
   // const resultTest = polymerCreator(stringArray);
-  // t.is(resultTest, 1588);
+  // t.is(resultTest, 2189668501237);
 
   const fileName = './src/day14/input.txt';
   const rawData: Array<string> = fs.readFileSync(fileName, 'utf8').split('\r\n').filter(it => it.length > 0);
@@ -20,5 +20,5 @@ test('polymerCreator', (t) => {
   // @ts-ignore
   const stringArray: Array<[string, string]> = rawData.map(it => it.split(' -> '));
   const result = polymerCreator(stringArray);
-  t.is(result, 2447);
+  t.is(result, 3018019237563);
 });

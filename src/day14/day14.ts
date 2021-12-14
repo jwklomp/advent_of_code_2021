@@ -1,33 +1,46 @@
+interface Transaction {
+  sequenceAmounts: Array<[string, number]>,
+  insertedChar: [string, number],
+}
+
 const performInsertions = (
-  startSequence: Array<string>,
+  charCounter: Map<string, number>,
+  combinationCounter: Map<string, number>,
   insertionOperations: Array<[sequence: string, insertChar: string]>,
   nrOfSteps: number
-): Array<string> => {
-  const insertions = insertionOperations.map((opp: [sequence: string, insertChar: string]) => {
-    // create sorted array of insertions
-    return startSequence.map((char: string, i: number) => {
-      if (i < startSequence.length - 1) { // not last element
-        if (opp[0] === char.concat(startSequence[i + 1])) {
-          return [i, opp[1]];
-        }
-      }
-    }).filter(it => it !== undefined);
-  }).filter(it => it.length > 0);
+): Map<string, number> => {
+  // collect all mutations that should be done to the maps. Sort of like "transactions"
+  const transactions: Array<Transaction> = insertionOperations.map(insertOperation => {
+    const [seq, char] = insertOperation;
+    const nrOfSeq = combinationCounter.get(seq) ?? 0; // find number of times the sequence PQ occurs = X
+    if (nrOfSeq > 0) {
+      const [seq1, seq2] = seq.split('');
+      const sequenceAmount1 = [`${seq1}${char}`, nrOfSeq]; // increase number of PC sequence with X
+      const sequenceAmount2 = [`${char}${seq2}`, nrOfSeq]; // increase number of CQ sequence with X
+      const sequenceAmount3 = [seq, -nrOfSeq]; // decrease number of NN to 0
+      const sequenceAmounts = [sequenceAmount1, sequenceAmount2, sequenceAmount3];
+      const insertedChar = [char, nrOfSeq]; // increase number of Cs with X
+      return { sequenceAmounts, insertedChar };
+    }
+  });
+  // new update the maps all in one go.
+  transactions
+    .filter(it => it !== undefined)
+    .forEach(transaction => {
+      const [char, amount] = transaction.insertedChar;
+      const current = charCounter.get(char) ?? 0;
+      charCounter.set(char, current + amount);
 
-  // do insertions, keeping track of the correct index to insert
-  const newSequence = insertions
-    .flatMap(it => it)
-    .sort(function(a, b) {
-      return a[0] - b[0];
-    }).reduce((acc: Array<string>, ins: [number, string], index: number) => {
-      const insertAt = ins[0] + index + 1;
-      return [...acc.slice(0, insertAt), ins[1], ...acc.slice(insertAt)] as Array<string>;
-    }, startSequence);
-
+      transaction.sequenceAmounts.forEach(sa => {
+        const [seq, amount] = sa;
+        const current = combinationCounter.get(seq) ?? 0;
+        combinationCounter.set(seq, current + amount);
+      });
+    });
   if (nrOfSteps > 1) {
-    return performInsertions(newSequence as Array<string>, insertionOperations, nrOfSteps - 1);
+    return performInsertions(charCounter, combinationCounter, insertionOperations, nrOfSteps - 1);
   } else {
-    return newSequence as Array<string>;
+    return charCounter;
   }
 };
 
@@ -35,10 +48,31 @@ export const polymerCreator = (
   insertionOperations: Array<[sequence: string, insertChar: string]>
 ): number => {
   const startString = 'ONHOOSCKBSVHBNKFKSBK';
-  const nrOfSteps = 10;
-  const resultArray: Array<string> = performInsertions(startString.split(''), insertionOperations, nrOfSteps);
-  const counts = [...new Set(resultArray)]
-    .map(it => resultArray.filter(_it => it === _it).length)
+  const nrOfSteps = 40;
+  const chars = ['B', 'C', 'F', 'H', 'K', 'N', 'O', 'P', 'S', 'V'];
+
+  const charCounter = new Map<string, number>(chars.map(i => [i, 0]));
+  const startArray = startString.split('');
+  startArray.forEach(it => {
+    const current = charCounter.get(it) ?? 0;
+    charCounter.set(it, current + 1);
+  });
+
+  const combinations = chars.flatMap(first => chars.map(second => first + second));
+  const combinationCounter = new Map<string, number>(combinations.map(i => [i, 0]));
+  startArray.forEach((first, index) => {
+    if (index < startArray.length - 1) { // not last character
+      const second = startString[index + 1];
+      const key = first + second;
+      const current = charCounter.get(key) ?? 0;
+      combinationCounter.set(key, current + 1);
+    }
+  });
+
+  const resultMap: Map<string, number> = performInsertions(charCounter, combinationCounter, insertionOperations, nrOfSteps);
+
+  const counts = Array.from(resultMap.values())
+    .filter(it => it > 0)
     .sort(function(a, b) {
       return a - b;
     });

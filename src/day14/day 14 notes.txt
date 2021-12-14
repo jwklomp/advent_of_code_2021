@@ -27,4 +27,145 @@ actual	 NCNBCHB
 
     
 expected NBCCNBBBCBHCB
-actual   NCNBBCBCBBHCB
+actual   NBCCNBBBCBHCB
+
+expected NBBBCNCCNBBNBNBBCHBHHBCHB
+actual 	 NBBBCNCCNBBNBNBBCHBHHBCHB
+
+
+actual   NBBBCNCCNBNBBCHBHHBCB
+NBCCNBBBCBHCB
+
+
+expected NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB
+actual   NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB
+
+
+
+NBBNBBBCCNBCNCNBBNBBCBHCBHHNHBCHB
+
+combis
+======
+can never be before initial first or after initial last
+
+Don't update the acual string but make an abstract representation
+
+
+1- get all distince characters in start string + insert statements (manual?)
+2- counters per char, all set to 0
+3- make all possible combinations. range with range, set to 0 
+
+- process startString add to 2 and 3
+
+
+- process all insertions
+
+
+NNCB
+
+combis
+NN 1
+NC 1
+CB 1
+
+also total occurences N C B etc
+
+NN -> C
+NNCB
+The first pair (NN) matches the rule NN -> C, so element C is inserted between the first N and the second N.
+count nr of NN combis 
+NN -1 * number of NN combis => 0
+NC +1 * number of NN combis 
+CN +1 * number of NN combis 
+total number of Cs +1
+
+
+NCNCB
+
+ 
+  
+The second pair (NC) matches the rule NC -> B, so element B is inserted between the N and the C.
+Note that it is NOT inserted in the NC that was created above
+NCNBCB
+
+   
+The third pair (CB) matches the rule CB -> H, so element H is inserted between the C and the B.
+
+  const distinctChars: ["B", "C", "F", "H", "K", "N", "O", "P", "S", "V"]
+  
+    const distinctChars: Array<string> = [...new Set([...startString.split('')
+    , ...insertionOperations.flatMap(it => [...it[0], it[1]])])]
+    .sort();
+
+
+ NCNBCHB
+ B2
+ C2
+ N2
+ H1
+ 
+ NBCCNBBBCBHCB
+ 
+B = 6  ok
+C = 4  ok
+H = 1  ok
+N = 2  ok
+BB = 2 ok
+BC = 2 ok
+BH = 1 ok 
+CB = 2 ok
+CC = 1 ok
+CN = 1 ok
+
+NBBBCNCCNBBNBNBBCHBHHBCHB
+
+
+B = 11 ok
+C = 5 ok
+H = 4 ok
+N = 5 ok
+BB = 4 ok
+BC = 3 ok
+BH = 1 ok
+BN = 2 ok
+CC = 1 ok
+CH = 2  ok
+CN = 2  ok
+HB = 3  ok
+HH = 1 ok
+NB = 4 ok
+NC = 1 ok
+
+
+
+NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB
+
+B = 23 ok
+C = 10 ok
+H = 5 ok
+N = 11 ok
+BB = 9
+BC = 4
+BH = 3
+BN = 6
+CB = 5
+CC = 2
+CN = 3
+HC = 3
+HH = 1
+HN = 1
+NB = 9
+NC = 1
+NH = 1
+
+
+
+O
+N
+H
+S
+C
+K
+B
+V
+F
