@@ -23,7 +23,7 @@ const performInsertions = (
       return { sequenceAmounts, insertedChar };
     }
   });
-  // new update the maps all in one go.
+  // now update the maps all in one go.
   transactions
     .filter(it => it !== undefined)
     .forEach(transaction => {
