@@ -47,12 +47,11 @@ const performInsertions = (
 export const polymerCreator = (
   insertionOperations: Array<[sequence: string, insertChar: string]>
 ): number => {
-  const startString = 'ONHOOSCKBSVHBNKFKSBK';
+  const startArray  = 'ONHOOSCKBSVHBNKFKSBK'.split('');
   const nrOfSteps = 40;
   const chars = ['B', 'C', 'F', 'H', 'K', 'N', 'O', 'P', 'S', 'V'];
 
   const charCounter = new Map<string, number>(chars.map(i => [i, 0])); // map with number of times a character occurs
-  const startArray = startString.split('');
   startArray.forEach(it => {
     const current = charCounter.get(it) ?? 0;
     charCounter.set(it, current + 1);
@@ -62,7 +61,7 @@ export const polymerCreator = (
   const combinationCounter = new Map<string, number>(combinations.map(i => [i, 0])); // map with number of times a combination occurs
   startArray.forEach((first, index) => {
     if (index < startArray.length - 1) { // not last character
-      const second = startString[index + 1];
+      const second = startArray[index + 1];
       const key = first + second;
       const current = charCounter.get(key) ?? 0;
       combinationCounter.set(key, current + 1);
