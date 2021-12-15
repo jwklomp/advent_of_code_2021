@@ -34,6 +34,14 @@ export class Grid2D<T> {
     });
   }
 
+  getRowLength(): number {
+    return this.rowLength;
+  }
+
+  getColumnLength(): number {
+    return this.colLength;
+  }
+
   getCells(): Array<Cell<T>> {
     return this.grid.flatMap((row: Array<Cell<T>>) =>
       row.map((cell: Cell<T>) => cell));
@@ -44,7 +52,7 @@ export class Grid2D<T> {
   }
 
   getCellByCoordinate(x: number, y: number): Cell<T> {
-    return this.grid[y][x] as unknown as Cell<T>
+    return this.grid[y][x] as unknown as Cell<T>;
   }
 
   /**
